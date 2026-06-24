@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 20px;
+
+    background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+}
+
+/* CARDS */
+.row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    padding: 20px;
+    border-radius: 15px;
+    width: 180px;
+    font-weight: bold;
+}
+
+.total { background: #6a11cb; }
+.spam { background: #ff4b2b; }
+.ham { background: #00c853; }
+
+/* CHART */
+.chart-box {
+    width: 300px;
+    margin: 20px auto;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}
+
+th {
+    background: rgba(255,255,255,0.2);
+}
+
+/* BUTTON */
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background: red;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>📊 Dashboard</h1>
+
+    <!-- CARDS -->
+    <div class="row">
+        <div class="card total">Total: {{ total }}</div>
+        <div class="card spam">Spam: {{ spam_count }}</div>
+        <div class="card ham">Ham: {{ ham_count }}</div>
+    </div>
+
+    <!-- PERCENTAGE -->
+    <h3>Spam Percentage: {{ spam_percentage }}%</h3>
+
+    <!-- CHART -->
+    <div class="chart-box">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <!-- CLEAR BUTTON -->
+    <form method="post" action="{% url 'clear_history' %}">
+        {% csrf_token %}
+        <button class="btn delete-btn">Clear All</button>
+    </form>
+
+    <!-- TABLE -->
+    {% if messages %}
+    <table>
+        <tr>
+            <th>Message</th>
+            <th>Result</th>
+            <th>Action</th>
+        </tr>
+
+        {% for msg in messages %}
+        <tr>
+            <td>{{ msg.text }}</td>
+
+            <td style="color:{% if msg.result == 'Spam' %}red{% else %}lightgreen{% endif %}; font-weight:bold;">
+                {{ msg.result }}
+            </td>
+
+            <td>
+                <form method="post" action="{% url 'delete_message' msg.id %}">
+                    {% csrf_token %}
+                    <button class="btn delete-btn">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% else %}
+        <p>No messages yet</p>
+    {% endif %}
+</div>
+
+<!-- CHART SCRIPT -->
+<script>
+const ctx = document.getElementById('myChart');
+
+new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Spam', 'Ham'],
+        datasets: [{
+            data: [{{ spam_count }}, {{ ham_count }}],
+            backgroundColor: ['#ff4b2b', '#00c853']
+        }]
+    }
+});
+</script>
+
+</body>
+</html>

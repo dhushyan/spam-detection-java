@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - SpamShield</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+<div class="auth-card">
+    <div class="auth-logo">🛡️ SpamShield</div>
+    <h2>Create Account</h2>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <!-- th:action auto-injects CSRF hidden field — replaces Django's {% csrf_token %} -->
+    <form th:action="@{/register}" th:object="${registerRequest}" method="post" class="auth-form">
+
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" th:field="*{username}" placeholder="Choose a username" required>
+            <span th:if="${#fields.hasErrors('username')}"
+                  th:errors="*{username}" class="error-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" th:field="*{email}" placeholder="your@email.com" required>
+            <span th:if="${#fields.hasErrors('email')}"
+                  th:errors="*{email}" class="error-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" th:field="*{password}" placeholder="Min 6 characters" required>
+            <span th:if="${#fields.hasErrors('password')}"
+                  th:errors="*{password}" class="error-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" th:field="*{confirmPassword}" placeholder="Repeat password" required>
+        </div>
+
+        <button type="submit" class="btn-primary full-width">Create Account</button>
+    </form>
+
+    <p class="auth-link">Already have an account? <a th:href="@{/login}">Login here</a></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+/* =============================================
+   SPAM SHIELD - STYLESHEET
+   ============================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: #1a1d27;
+    border-bottom: 1px solid #2d3748;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.nav-brand { font-size: 1.3rem; font-weight: 700; color: #6366f1; }
+.nav-links a { color: #a0aec0; text-decoration: none; margin-left: 20px; }
+.nav-links a:hover { color: #fff; }
+.btn-logout {
+    background: none;
+    border: 1px solid #4a5568;
+    color: #a0aec0;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 16px;
+}
+.btn-logout:hover { border-color: #e53e3e; color: #e53e3e; }
+
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 60px 20px 30px;
+}
+.hero h1 { font-size: 2.8rem; font-weight: 800; color: #f7fafc; }
+.accent { color: #6366f1; }
+.subtitle { color: #718096; margin-top: 12px; font-size: 1.1rem; }
+
+/* CONTAINER */
+.container { max-width: 860px; margin: 0 auto; padding: 30px 20px; }
+
+/* CHECK FORM */
+.check-form { display: flex; flex-direction: column; gap: 16px; }
+.email-input {
+    width: 100%;
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-radius: 10px;
+    padding: 16px;
+    color: #e2e8f0;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+.email-input:focus { outline: none; border-color: #6366f1; }
+.btn-check {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+    align-self: flex-start;
+}
+.btn-check:hover { background: #4f46e5; }
+
+/* RESULT CARD */
+.result-card {
+    margin-top: 28px;
+    border-radius: 14px;
+    padding: 30px;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+}
+.result-spam { background: #2d1515; border: 1px solid #9b2c2c; }
+.result-ham  { background: #0d2d1a; border: 1px solid #276749; }
+.result-icon { font-size: 2.5rem; margin-bottom: 10px; }
+.result-card h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+.result-spam h2 { color: #fc8181; }
+.result-ham h2  { color: #68d391; }
+.result-confidence { color: #a0aec0; margin-top: 6px; }
+
+/* DASHBOARD STATS */
+.page-title { font-size: 2rem; font-weight: 700; margin-bottom: 28px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 36px; }
+@media(max-width: 700px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+}
+.stat-card.spam { border-color: #9b2c2c; }
+.stat-card.ham  { border-color: #276749; }
+.stat-card.pct  { border-color: #744210; }
+.stat-number { font-size: 2.2rem; font-weight: 800; color: #6366f1; }
+.stat-card.spam .stat-number { color: #fc8181; }
+.stat-card.ham  .stat-number { color: #68d391; }
+.stat-card.pct  .stat-number { color: #f6ad55; }
+.stat-label { color: #718096; margin-top: 6px; font-size: 0.9rem; }
+
+/* HISTORY TABLE */
+.table-wrapper { background: #1a1d27; border-radius: 14px; padding: 24px; }
+.table-wrapper h2 { margin-bottom: 18px; }
+.history-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.history-table th {
+    text-align: left; padding: 10px 14px;
+    color: #718096; border-bottom: 1px solid #2d3748;
+}
+.history-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #1e2330;
+    vertical-align: middle;
+}
+.history-table tr:last-child td { border-bottom: none; }
+.content-preview { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* BADGES */
+.badge {
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 700;
+}
+.badge-spam { background: #2d1515; color: #fc8181; }
+.badge-ham  { background: #0d2d1a; color: #68d391; }
+
+/* DELETE BUTTON */
+.btn-delete {
+    background: none; border: 1px solid #e53e3e;
+    color: #fc8181; padding: 4px 12px;
+    border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+}
+.btn-delete:hover { background: #2d1515; }
+
+/* FLASH */
+.flash-success {
+    margin-top: 16px; padding: 12px 18px;
+    background: #0d2d1a; border: 1px solid #276749;
+    color: #68d391; border-radius: 8px;
+}
+.empty-msg { color: #718096; padding: 20px 0; }
+.empty-msg a { color: #6366f1; }
+
+/* AUTH PAGES */
+body.auth-page {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; background: #0f1117;
+}
+.auth-card {
+    background: #1a1d27; border: 1px solid #2d3748;
+    border-radius: 16px; padding: 40px;
+    width: 100%; max-width: 420px;
+}
+.auth-logo { font-size: 1.5rem; font-weight: 700; color: #6366f1; text-align: center; margin-bottom: 8px; }
+.auth-card h2 { text-align: center; font-size: 1.4rem; margin-bottom: 24px; color: #f7fafc; }
+.auth-form { display: flex; flex-direction: column; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.9rem; color: #a0aec0; }
+.form-group input {
+    background: #0f1117; border: 1px solid #2d3748;
+    border-radius: 8px; padding: 12px 14px;
+    color: #e2e8f0; font-size: 1rem;
+}
+.form-group input:focus { outline: none; border-color: #6366f1; }
+.btn-primary {
+    background: #6366f1; color: white; border: none;
+    padding: 12px; font-size: 1rem; font-weight: 600;
+    border-radius: 8px; cursor: pointer;
+}
+.btn-primary:hover { background: #4f46e5; }
+.full-width { width: 100%; }
+.auth-link { text-align: center; margin-top: 18px; color: #718096; font-size: 0.9rem; }
+.auth-link a { color: #6366f1; text-decoration: none; }
+
+/* ALERTS */
+.alert { padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; }
+.alert-error   { background: #2d1515; border: 1px solid #9b2c2c; color: #fc8181; }
+.alert-success { background: #0d2d1a; border: 1px solid #276749; color: #68d391; }
+
+/* ERRORS */
+.error-text { color: #fc8181; font-size: 0.85rem; }
+
+/* ANIMATION */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

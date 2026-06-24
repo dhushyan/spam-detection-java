@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - SpamShield</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+<div class="auth-card">
+    <div class="auth-logo">🛡️ SpamShield</div>
+    <h2>Sign In</h2>
+
+    <!-- Error message (wrong password) -->
+    <div th:if="${param.error}" class="alert alert-error">
+        Invalid username or password.
+    </div>
+
+    <!-- Success message (after registration) -->
+    <div th:if="${param.logout}" class="alert alert-success">
+        You have been logged out.
+    </div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+    <!--
+        th:action="@{/login}" automatically adds the CSRF hidden input.
+        Spring Security processes POST /login — you don't write that controller.
+        This replaces Django's {% csrf_token %} + auth views entirely.
+    -->
+    <form th:action="@{/login}" method="post" class="auth-form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"
+                   placeholder="Enter username" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"
+                   placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn-primary full-width">Login</button>
+    </form>
+
+    <p class="auth-link">Don't have an account? <a th:href="@{/register}">Register here</a></p>
+</div>
+
+</body>
+</html>

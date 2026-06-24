@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spam Detection</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+    text-align: center;
+    color: white;
+
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+h1 {
+    color: white;
+}
+
+textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 15px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #ff6a00, #ee0979);
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    animation: pop 0.4s ease;
+}
+
+.result.spam {
+    background: #ff4d4d;
+}
+
+.result.ham {
+    background: #28a745;
+}
+
+.progress {
+    background: #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 20px;
+    background: linear-gradient(to right, red, orange, green);
+    color: white;
+    text-align: center;
+}
+
+/* DARK MODE */
+.dark {
+    background: #121212 !important;
+}
+
+.dark .container {
+    background: #1e1e1e;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(20px);}
+    to {opacity:1; transform:translateY(0);}
+}
+
+@keyframes pop {
+    from {transform:scale(0.8);}
+    to {transform:scale(1);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<button onclick="toggleDarkMode()" class="btn" style="float:right;">🌙</button>
+
+<h1><i class="fas fa-shield-alt"></i> Spam Detection</h1>
+<p>Check if your message is spam</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Check</button>
+</form>
+
+{% if result %}
+<div class="result {{ result|lower }}">
+    <h2>{{ result }}</h2>
+</div>
+{% endif %}
+
+<!-- ✅ PROBABILITY HERE (CORRECT PLACE) -->
+{% if probability %}
+<div class="progress">
+    <div class="progress-bar" style="width: {{ probability }}%;">
+        {{ probability }}%
+    </div>
+</div>
+{% endif %}
+
+<h2 style="margin-top:30px;">Previous Messages</h2>
+
+<table style="width:100%; margin-top:15px;">
+<tr>
+    <th>Message</th>
+    <th>Result</th>
+</tr>
+
+{% for msg in messages %}
+<tr>
+    <td>{{ msg.text }}</td>
+    <td style="color: {% if msg.result == 'Spam' %}red{% else %}lime{% endif %};">
+        {{ msg.result }}
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+<script>
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>

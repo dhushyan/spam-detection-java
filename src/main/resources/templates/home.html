@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-brand">🛡️ SpamShield</div>
+    <div class="nav-links">
+        <!-- sec:authorize replaces Django's {% if user.is_authenticated %} -->
+        <span sec:authorize="isAuthenticated()">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <span sec:authentication="name" style="color:#aaa; margin: 0 8px;"></span>
+            <!-- th:action with @{} auto-injects CSRF token — no manual {% csrf_token %} needed! -->
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn-logout">Logout</button>
+            </form>
+        </span>
+        <span sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/register}" class="btn-primary">Register</a>
+        </span>
+    </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Is this email <span class="accent">spam?</span></h1>
+    <p class="subtitle">Paste any email content below — our ML model will classify it instantly.</p>
+</div>
+
+<!-- CHECK FORM -->
+<!-- th:action="@{/check}" automatically includes CSRF token in the request -->
+<!-- This is equivalent to Django's {% csrf_token %} inside the form -->
+<div class="container">
+    <form th:action="@{/check}" th:object="${emailCheckRequest}" method="post" class="check-form">
+        <!-- No need to add {% csrf_token %} — Thymeleaf handles it automatically! -->
+
+        <textarea th:field="*{content}"
+                  placeholder="Paste email content here..."
+                  rows="8"
+                  class="email-input"></textarea>
+
+        <!-- Validation error — replaces Django's {{ form.content.errors }} -->
+        <p th:if="${#fields.hasErrors('content')}"
+           th:errors="*{content}"
+           class="error-text"></p>
+
+        <button type="submit" class="btn-check">🔍 Check for Spam</button>
+    </form>
+
+    <!-- RESULT — replaces Django's {% if result %} -->
+    <div th:if="${result}" class="result-card"
+         th:classappend="${isSpam} ? 'result-spam' : 'result-ham'">
+
+        <div class="result-icon" th:text="${isSpam} ? '🚨' : '✅'"></div>
+        <h2 th:text="${isSpam} ? 'SPAM DETECTED' : 'LOOKS SAFE'"></h2>
+        <p class="result-label"
+           th:text="'Prediction: ' + ${result.prediction.toUpperCase()}"></p>
+        <p class="result-confidence"
+           th:text="'Confidence: ' + ${#numbers.formatDecimal(result.confidence * 100, 1, 1)} + '%'"></p>
+    </div>
+</div>
+
+</body>
+</html>

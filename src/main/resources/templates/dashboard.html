@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - SpamShield</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">🛡️ SpamShield</div>
+    <div class="nav-links">
+        <a th:href="@{/home}">Check Email</a>
+        <span sec:authentication="name" style="color:#aaa; margin: 0 8px;"></span>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="page-title">Dashboard</h1>
+
+    <!-- STATS CARDS — replaces Django context variables -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" th:text="${stats.totalChecked}">0</div>
+            <div class="stat-label">Total Checked</div>
+        </div>
+        <div class="stat-card spam">
+            <div class="stat-number" th:text="${stats.spamCount}">0</div>
+            <div class="stat-label">Spam Detected</div>
+        </div>
+        <div class="stat-card ham">
+            <div class="stat-number" th:text="${stats.hamCount}">0</div>
+            <div class="stat-label">Ham (Safe)</div>
+        </div>
+        <div class="stat-card pct">
+            <div class="stat-number"
+                 th:text="${#numbers.formatDecimal(stats.spamPercentage, 1, 1)} + '%'">0%</div>
+            <div class="stat-label">Spam Rate</div>
+        </div>
+    </div>
+
+    <!-- HISTORY TABLE — replaces Django {% for email in emails %} -->
+    <div class="table-wrapper">
+        <h2>Check History</h2>
+
+        <!-- Empty state -->
+        <p th:if="${#lists.isEmpty(emails)}" class="empty-msg">
+            No emails checked yet. <a th:href="@{/home}">Check one now →</a>
+        </p>
+
+        <table th:unless="${#lists.isEmpty(emails)}" class="history-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Email Content (preview)</th>
+                    <th>Result</th>
+                    <th>Confidence</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- th:each replaces Django's {% for email in emails %} -->
+                <tr th:each="email, stat : ${emails}">
+                    <td th:text="${stat.count}"></td>
+                    <td class="content-preview"
+                        th:text="${#strings.abbreviate(email.content, 60)}"></td>
+                    <td>
+                        <span th:class="'badge ' + (${email.prediction == 'spam'} ? 'badge-spam' : 'badge-ham')"
+                              th:text="${email.prediction.toUpperCase()}"></span>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(email.confidence * 100, 1, 1)} + '%'"></td>
+                    <td th:text="${#temporals.format(email.checkedAt, 'dd MMM yyyy HH:mm')}"></td>
+                    <td>
+                        <!-- th:action auto-injects CSRF — replaces Django's {% csrf_token %} -->
+                        <form th:action="@{/delete/{id}(id=${email.id})}" method="post"
+                              onsubmit="return confirm('Delete this record?')">
+                            <button type="submit" class="btn-delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Flash message — replaces Django's messages framework -->
+    <div th:if="${message}" class="flash-success" th:text="${message}"></div>
+</div>
+
+</body>
+</html>
