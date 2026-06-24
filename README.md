@@ -1,135 +1,138 @@
-# 🛡️ Spam Detection Classifier — Java Spring Boot Version
+📌 Spam Detection System using Java + Python ML API
+🧠 Project Overview
 
-Converted from: **Python Django** → **Java Spring Boot**
+This project is a full-stack Spam Detection System that classifies messages as Spam or Ham (Not Spam) using Machine Learning.
 
----
+It integrates:
 
-## 📁 Project Structure
+Java (Spring Boot) → Backend API & main application
+Python (Flask) → Machine Learning model serving API
+Machine Learning (Naive Bayes + TF-IDF) → Email/SMS classification
 
-```
+The system takes user input from Java backend, sends it to Python ML API, and returns prediction results.
+
+🚀 Features
+🔍 Detects spam vs ham messages
+🤖 Machine Learning model trained using Naive Bayes
+⚡ Fast REST API using Flask
+🔗 Java–Python integration via HTTP requests
+📊 TF-IDF text vectorization
+💾 Model persistence using Pickle
+🧪 Tested with real-time API requests
+🏗️ System Architecture
+User Input
+   ↓
+Java Spring Boot Backend
+   ↓ (HTTP Request)
+Flask Python API
+   ↓
+ML Model (TF-IDF + Naive Bayes)
+   ↓
+Prediction (Spam / Ham)
+   ↓
+Response returned to Java
+🧰 Tech Stack
+Backend (Java)
+Spring Boot
+REST APIs
+Maven
+Machine Learning (Python)
+Scikit-learn
+Pandas
+NumPy
+Naive Bayes Classifier
+TF-IDF Vectorizer
+API
+Flask
+JSON communication
+📂 Project Structure
 spam-detection-java/
-├── pom.xml                                         ← Maven (replaces requirements.txt)
+│
 ├── python-ml-api/
-│   └── ml_api.py                                   ← Flask wrapper for your model.pkl
-└── src/main/
-    ├── java/com/spamdetection/
-    │   ├── SpamDetectionApplication.java            ← Main (replaces manage.py)
-    │   ├── config/
-    │   │   └── SecurityConfig.java                  ← Auth + CSRF (replaces Django auth)
-    │   ├── controller/
-    │   │   └── SpamController.java                  ← Views + URLs combined
-    │   ├── dto/
-    │   │   └── Dtos.java                            ← Forms (replaces forms.py)
-    │   ├── model/
-    │   │   ├── Email.java                           ← DB model (replaces models.py)
-    │   │   └── User.java                            ← User model
-    │   ├── repository/
-    │   │   ├── EmailRepository.java                 ← ORM queries
-    │   │   └── UserRepository.java
-    │   └── service/
-    │       ├── EmailService.java                    ← Business logic
-    │       ├── MlService.java                       ← Calls Python Flask API
-    │       └── UserService.java                     ← Auth logic
-    └── resources/
-        ├── application.properties                   ← Settings (replaces settings.py)
-        ├── static/css/style.css
-        └── templates/
-            ├── home.html                            ← home.html (Thymeleaf)
-            ├── dashboard.html                       ← dashboard.html
-            ├── login.html
-            └── register.html
-```
-
----
-
-## ⚙️ Django → Java Mapping
-
-| Django | Java Spring Boot |
-|--------|-----------------|
-| `settings.py` | `application.properties` |
-| `models.py` | `model/Email.java`, `model/User.java` |
-| `views.py` | `controller/SpamController.java` |
-| `urls.py` | `@GetMapping`, `@PostMapping` annotations |
-| `forms.py` | `dto/Dtos.java` |
-| `ml_model.py` | Python Flask API (`ml_api.py`) called via REST |
-| `{% csrf_token %}` | Automatic via `th:action="@{/url}"` in Thymeleaf |
-| `migrations/` | `spring.jpa.hibernate.ddl-auto=update` |
-| `db.sqlite3` | MySQL `spam_detection_db` |
-| `@login_required` | `SecurityConfig.java` (global rules) |
-| Django admin | Can add `/admin` controller later |
-
----
-
-## 🚀 Setup & Run
-
-### Step 1 — MySQL Setup
-```sql
-CREATE DATABASE spam_detection_db;
-```
-Update `application.properties`:
-```
-spring.datasource.username=root
-spring.datasource.password=YOUR_PASSWORD
-```
-
-### Step 2 — Start Python ML API
-```bash
-# Copy ml_api.py into your existing Django project root
-# (where model.pkl, vectorizer.pkl, threshold.pkl are)
-
-pip install flask
-python ml_api.py
-# Runs on http://localhost:5000
-```
-
-### Step 3 — Start Java Spring Boot App
-```bash
-# In spam-detection-java/ folder:
-mvn spring-boot:run
-# Runs on http://localhost:8080
-```
-
-### Step 4 — Open Browser
-```
-http://localhost:8080
-```
-
----
-
-## 🔐 CSRF — No More 403 Errors!
-
-In Django you had to manually add `{% csrf_token %}` in every form.
-
-In Spring Boot + Thymeleaf, just use `th:action="@{/url}"` and the CSRF token is
-**automatically injected** — you never get CSRF 403 errors.
-
-```html
-<!-- Django (manual) -->
-<form method="POST">
-    {% csrf_token %}
-    ...
-</form>
-
-<!-- Spring Boot Thymeleaf (automatic) -->
-<form th:action="@{/check}" method="post">
-    <!-- No manual token needed! -->
-    ...
-</form>
-```
-
----
-
-## 🧪 Test the ML API directly
-```bash
-curl -X POST http://localhost:5000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Congratulations! You won a free iPhone! Click here now!"}'
-```
-Expected response:
-```json
+│   ├── ml_api.py              # Flask API
+│   ├── ml_model.py            # Training script
+│   ├── emails.csv             # Dataset
+│   └── detector/
+│       ├── model.pkl
+│       ├── vectorizer.pkl
+│
+├── src/                       # Java Spring Boot code
+│   ├── controller/
+│   ├── service/
+│   ├── model/
+│   └── repository/
+│
+├── pom.xml
+└── README.md
+⚙️ How It Works
+1. Model Training
+Dataset (emails.csv) is loaded
+Text is converted using TF-IDF
+Model trained using Multinomial Naive Bayes
+Saved as .pkl files
+2. Flask API
+Loads trained model
+Exposes endpoint /predict
+Accepts JSON input:
 {
-  "prediction": "spam",
-  "confidence": 0.97,
-  "message": "Spam detected! Be careful."
+  "text": "Congratulations! You won a lottery"
 }
-```
+3. Prediction Output
+{
+  "text": "Congratulations! You won a lottery",
+  "prediction": "spam",
+  "confidence": 0.91
+}
+4. Java Integration
+Java backend sends HTTP request to Flask API
+Receives prediction response
+Displays result to user
+▶️ How to Run the Project
+Step 1: Run Python ML API
+cd python-ml-api
+python ml_api.py
+
+API runs at:
+
+http://localhost:5000
+Step 2: Train Model (if needed)
+python ml_model.py
+Step 3: Run Java Backend
+mvn spring-boot:run
+📡 API Endpoint
+Predict Spam
+POST /predict
+Request Body:
+{
+  "text": "Free iPhone offer, click now!"
+}
+Response:
+{
+  "text": "Free iPhone offer, click now!",
+  "prediction": "spam"
+}
+📊 Model Details
+Algorithm: Multinomial Naive Bayes
+Feature Extraction: TF-IDF Vectorizer
+Dataset: SMS/Email spam dataset
+Output: Binary classification (Spam / Ham)
+🎯 Future Improvements
+Improve accuracy using deep learning models
+Add frontend UI dashboard
+Deploy on cloud (AWS / Render / Azure)
+Add authentication system
+Real-time email integration
+👨‍💻 Author
+
+Your Name
+Final Year IT Student
+Project: Spam Detection System using ML + Java
+
+⭐ Summary
+
+This project demonstrates:
+
+Machine Learning integration with backend systems
+Real-world API communication
+Full-stack system design
+Practical AI deployment using Flask + Java
